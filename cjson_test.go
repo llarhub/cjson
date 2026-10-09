@@ -1,6 +1,6 @@
 //go:build llgo
 
-package cjson_test
+package cjson
 
 import (
 	"testing"
