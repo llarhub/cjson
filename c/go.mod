@@ -1,4 +1,4 @@
-module github.com/llarhub/cjson/c
+module github.com/llarhub/cjson
 
 go 1.23
 
