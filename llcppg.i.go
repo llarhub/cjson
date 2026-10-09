@@ -2,4 +2,4 @@
 
 package cjson
 
-const LLGoPackage = "link: $(pkg-config --libs libcjson); -lcjson"
+const LLGoPackage = "link: $(pkg-config --libs libcjson_utils); -lcjson_utils -lcjson"

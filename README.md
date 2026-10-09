@@ -4,7 +4,7 @@ LLGo bindings for cJSON 1.7.19.
 
 ## Installation
 
-Install [LLGo](https://github.com/xgo-dev/llgo#readme) first, then install the native cJSON library and `pkg-config` for your platform. The binding links to `libcjson` through `pkg-config`.
+Install [LLGo](https://github.com/xgo-dev/llgo#readme) first, then install cJSON, its optional `libcjson_utils` library, and `pkg-config` for your platform. The binding links to both libraries through `pkg-config`.
 
 These bindings are generated from cJSON **1.7.19**, and the tests expect that exact library version. Package manager versions vary; if yours differs, use the source installation below to match the bindings.
 
@@ -34,6 +34,8 @@ Arch Linux ([cjson](https://archlinux.org/packages/extra/x86_64/cjson/)):
 ```bash
 sudo pacman -S cjson pkgconf
 ```
+
+Verify that your package provides both `libcjson.pc` and `libcjson_utils.pc`. Some older distribution packages build only the core library; use the source installation below with `-DENABLE_CJSON_UTILS=ON` in that case.
 
 ### Windows
 
@@ -69,6 +71,7 @@ cmake -S cJSON-1.7.19 -B cJSON-1.7.19/build \
   -DCMAKE_INSTALL_PREFIX="$HOME/.local" \
   -DCMAKE_INSTALL_LIBDIR=lib \
   -DBUILD_SHARED_LIBS=ON \
+  -DENABLE_CJSON_UTILS=ON \
   -DENABLE_CJSON_TEST=OFF
 cmake --build cJSON-1.7.19/build
 cmake --install cJSON-1.7.19/build
@@ -88,8 +91,8 @@ Keep these environment variables set in the terminal where you build and run you
 Verify that `pkg-config` finds the intended cJSON installation:
 
 ```bash
-pkg-config --modversion libcjson
-pkg-config --libs libcjson
+pkg-config --modversion libcjson libcjson_utils
+pkg-config --libs libcjson_utils
 ```
 
 Then, from your Go module directory:
@@ -97,6 +100,8 @@ Then, from your Go module directory:
 ```bash
 go get github.com/llarhub/cjson
 ```
+
+The binding also exposes the JSON Pointer, JSON Patch, and JSON Merge Patch helpers from `cJSON_Utils.h`; these methods require `libcjson_utils` at link and runtime.
 
 ## Usage
 
@@ -125,3 +130,30 @@ func main() {
 ```
 
 Save the example as `main.go` and run it with `llgo run .`.
+
+Use the cJSON Utils API to resolve a [JSON Pointer](https://www.rfc-editor.org/rfc/rfc6901):
+
+```go
+package main
+
+import (
+	"github.com/goplus/lib/c"
+	"github.com/llarhub/cjson"
+)
+
+func main() {
+	root := cjson.Parse(c.AllocaCStr(`{"user":{"name":"LLGo"}}`))
+	if root == nil {
+		panic("invalid JSON")
+	}
+	defer root.Delete()
+
+	name := root.Pointer(c.AllocaCStr("/user/name"))
+	if name == nil || name.IsString() == 0 {
+		panic("JSON Pointer did not resolve to a string")
+	}
+	println(c.GoString(name.StringValue()))
+}
+```
+
+This prints `LLGo`. The same package also provides JSON Patch and JSON Merge Patch helpers such as `GeneratePatches`, `ApplyPatches`, and `MergePatch`.
