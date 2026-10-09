@@ -25,10 +25,10 @@ const NESTING_LIMIT = 1000
 const CIRCULAR_LIMIT = 10000
 
 // The cJSON structure:
-type JSON struct {
-	Next        *JSON
-	Prev        *JSON
-	Child       *JSON
+type Node struct {
+	Next        *Node
+	Prev        *Node
+	Child       *Node
 	Type        c.Int
 	Valuestring *c.Char
 	Valueint    c.Int
@@ -58,83 +58,83 @@ func (self *Hooks) Init() {
 // Supply a block of JSON, and this returns a cJSON object you can interrogate.
 //
 //go:linkname Parse C.cJSON_Parse
-func Parse(value *c.Char) *JSON
+func Parse(value *c.Char) *Node
 
 //go:linkname ParseWithLength C.cJSON_ParseWithLength
-func ParseWithLength(value *c.Char, buffer_length c.SizeT) *JSON
+func ParseWithLength(value *c.Char, buffer_length c.SizeT) *Node
 
 // ParseWithOpts allows you to require (and check) that the JSON is null terminated, and to retrieve the pointer to the final byte parsed.
 // If you supply a ptr in return_parse_end and parsing fails, then return_parse_end will contain a pointer to the error so will match cJSON_GetErrorPtr().
 //
 //go:linkname ParseWithOpts C.cJSON_ParseWithOpts
-func ParseWithOpts(value *c.Char, return_parse_end **c.Char, require_null_terminated Bool) *JSON
+func ParseWithOpts(value *c.Char, return_parse_end **c.Char, require_null_terminated Bool) *Node
 
 //go:linkname ParseWithLengthOpts C.cJSON_ParseWithLengthOpts
-func ParseWithLengthOpts(value *c.Char, buffer_length c.SizeT, return_parse_end **c.Char, require_null_terminated Bool) *JSON
+func ParseWithLengthOpts(value *c.Char, buffer_length c.SizeT, return_parse_end **c.Char, require_null_terminated Bool) *Node
 
 // Render a cJSON entity to text for transfer/storage.
 //
-// llgo:link (*JSON).Print C.cJSON_Print
-func (self *JSON) Print() *c.Char {
+// llgo:link (*Node).Print C.cJSON_Print
+func (self *Node) Print() *c.Char {
 	return nil
 }
 
 // Render a cJSON entity to text for transfer/storage without any formatting.
 //
-// llgo:link (*JSON).PrintUnformatted C.cJSON_PrintUnformatted
-func (self *JSON) PrintUnformatted() *c.Char {
+// llgo:link (*Node).PrintUnformatted C.cJSON_PrintUnformatted
+func (self *Node) PrintUnformatted() *c.Char {
 	return nil
 }
 
 // Render a cJSON entity to text using a buffered strategy. prebuffer is a guess at the final size. guessing well reduces reallocation. fmt=0 gives unformatted, =1 gives formatted
 //
-// llgo:link (*JSON).PrintBuffered C.cJSON_PrintBuffered
-func (self *JSON) PrintBuffered(prebuffer c.Int, fmt Bool) *c.Char {
+// llgo:link (*Node).PrintBuffered C.cJSON_PrintBuffered
+func (self *Node) PrintBuffered(prebuffer c.Int, fmt Bool) *c.Char {
 	return nil
 }
 
 // Render a cJSON entity to text using a buffer already allocated in memory with given length. Returns 1 on success and 0 on failure.
 // NOTE: cJSON is not always 100% accurate in estimating how much memory it will use, so to be safe allocate 5 bytes more than you actually need
 //
-// llgo:link (*JSON).PrintPreallocated C.cJSON_PrintPreallocated
-func (self *JSON) PrintPreallocated(buffer *c.Char, length c.Int, format Bool) Bool {
+// llgo:link (*Node).PrintPreallocated C.cJSON_PrintPreallocated
+func (self *Node) PrintPreallocated(buffer *c.Char, length c.Int, format Bool) Bool {
 	return 0
 }
 
 // Delete a cJSON entity and all subentities.
 //
-// llgo:link (*JSON).Delete C.cJSON_Delete
-func (self *JSON) Delete() {
+// llgo:link (*Node).Delete C.cJSON_Delete
+func (self *Node) Delete() {
 }
 
 // Returns the number of items in an array (or object).
 //
-// llgo:link (*JSON).ArraySize C.cJSON_GetArraySize
-func (self *JSON) ArraySize() c.Int {
+// llgo:link (*Node).ArraySize C.cJSON_GetArraySize
+func (self *Node) ArraySize() c.Int {
 	return 0
 }
 
 // Retrieve item number "index" from array "array". Returns NULL if unsuccessful.
 //
-// llgo:link (*JSON).ArrayItem C.cJSON_GetArrayItem
-func (self *JSON) ArrayItem(index c.Int) *JSON {
+// llgo:link (*Node).ArrayItem C.cJSON_GetArrayItem
+func (self *Node) ArrayItem(index c.Int) *Node {
 	return self
 }
 
 // Get item "string" from object. Case insensitive.
 //
-// llgo:link (*JSON).ObjectItem C.cJSON_GetObjectItem
-func (self *JSON) ObjectItem(string *c.Char) *JSON {
+// llgo:link (*Node).ObjectItem C.cJSON_GetObjectItem
+func (self *Node) ObjectItem(string *c.Char) *Node {
 	return self
 }
 
-// llgo:link (*JSON).ObjectItemCaseSensitive C.cJSON_GetObjectItemCaseSensitive
-func (self *JSON) ObjectItemCaseSensitive(string *c.Char) *JSON {
+// llgo:link (*Node).ObjectItemCaseSensitive C.cJSON_GetObjectItemCaseSensitive
+func (self *Node) ObjectItemCaseSensitive(string *c.Char) *Node {
 	return self
 }
 
-// llgo:link (*JSON).HasObjectItem C.cJSON_HasObjectItem
-func (self *JSON) HasObjectItem(string *c.Char) Bool {
+// llgo:link (*Node).HasObjectItem C.cJSON_HasObjectItem
+func (self *Node) HasObjectItem(string *c.Char) Bool {
 	return 0
 }
 
@@ -145,115 +145,115 @@ func GetErrorPtr() *c.Char
 
 // Check item type and return its value
 //
-// llgo:link (*JSON).StringValue C.cJSON_GetStringValue
-func (self *JSON) StringValue() *c.Char {
+// llgo:link (*Node).StringValue C.cJSON_GetStringValue
+func (self *Node) StringValue() *c.Char {
 	return nil
 }
 
-// llgo:link (*JSON).NumberValue C.cJSON_GetNumberValue
-func (self *JSON) NumberValue() c.Double {
+// llgo:link (*Node).NumberValue C.cJSON_GetNumberValue
+func (self *Node) NumberValue() c.Double {
 	return 0
 }
 
 // These functions check the type of an item
 //
-// llgo:link (*JSON).IsInvalid C.cJSON_IsInvalid
-func (self *JSON) IsInvalid() Bool {
+// llgo:link (*Node).IsInvalid C.cJSON_IsInvalid
+func (self *Node) IsInvalid() Bool {
 	return 0
 }
 
-// llgo:link (*JSON).IsFalse C.cJSON_IsFalse
-func (self *JSON) IsFalse() Bool {
+// llgo:link (*Node).IsFalse C.cJSON_IsFalse
+func (self *Node) IsFalse() Bool {
 	return 0
 }
 
-// llgo:link (*JSON).IsTrue C.cJSON_IsTrue
-func (self *JSON) IsTrue() Bool {
+// llgo:link (*Node).IsTrue C.cJSON_IsTrue
+func (self *Node) IsTrue() Bool {
 	return 0
 }
 
-// llgo:link (*JSON).IsBool C.cJSON_IsBool
-func (self *JSON) IsBool() Bool {
+// llgo:link (*Node).IsBool C.cJSON_IsBool
+func (self *Node) IsBool() Bool {
 	return 0
 }
 
-// llgo:link (*JSON).IsNull C.cJSON_IsNull
-func (self *JSON) IsNull() Bool {
+// llgo:link (*Node).IsNull C.cJSON_IsNull
+func (self *Node) IsNull() Bool {
 	return 0
 }
 
-// llgo:link (*JSON).IsNumber C.cJSON_IsNumber
-func (self *JSON) IsNumber() Bool {
+// llgo:link (*Node).IsNumber C.cJSON_IsNumber
+func (self *Node) IsNumber() Bool {
 	return 0
 }
 
-// llgo:link (*JSON).IsString C.cJSON_IsString
-func (self *JSON) IsString() Bool {
+// llgo:link (*Node).IsString C.cJSON_IsString
+func (self *Node) IsString() Bool {
 	return 0
 }
 
-// llgo:link (*JSON).IsArray C.cJSON_IsArray
-func (self *JSON) IsArray() Bool {
+// llgo:link (*Node).IsArray C.cJSON_IsArray
+func (self *Node) IsArray() Bool {
 	return 0
 }
 
-// llgo:link (*JSON).IsObject C.cJSON_IsObject
-func (self *JSON) IsObject() Bool {
+// llgo:link (*Node).IsObject C.cJSON_IsObject
+func (self *Node) IsObject() Bool {
 	return 0
 }
 
-// llgo:link (*JSON).IsRaw C.cJSON_IsRaw
-func (self *JSON) IsRaw() Bool {
+// llgo:link (*Node).IsRaw C.cJSON_IsRaw
+func (self *Node) IsRaw() Bool {
 	return 0
 }
 
 // These calls create a cJSON item of the appropriate type.
 //
 //go:linkname CreateNull C.cJSON_CreateNull
-func CreateNull() *JSON
+func CreateNull() *Node
 
 //go:linkname CreateTrue C.cJSON_CreateTrue
-func CreateTrue() *JSON
+func CreateTrue() *Node
 
 //go:linkname CreateFalse C.cJSON_CreateFalse
-func CreateFalse() *JSON
+func CreateFalse() *Node
 
 //go:linkname CreateBool C.cJSON_CreateBool
-func CreateBool(boolean Bool) *JSON
+func CreateBool(boolean Bool) *Node
 
 //go:linkname CreateNumber C.cJSON_CreateNumber
-func CreateNumber(num c.Double) *JSON
+func CreateNumber(num c.Double) *Node
 
 //go:linkname CreateString C.cJSON_CreateString
-func CreateString(string *c.Char) *JSON
+func CreateString(string *c.Char) *Node
 
 // raw json
 //
 //go:linkname CreateRaw C.cJSON_CreateRaw
-func CreateRaw(raw *c.Char) *JSON
+func CreateRaw(raw *c.Char) *Node
 
 //go:linkname CreateArray C.cJSON_CreateArray
-func CreateArray() *JSON
+func CreateArray() *Node
 
 //go:linkname CreateObject C.cJSON_CreateObject
-func CreateObject() *JSON
+func CreateObject() *Node
 
 // Create a string where valuestring references a string so
 // it will not be freed by cJSON_Delete
 //
 //go:linkname CreateStringReference C.cJSON_CreateStringReference
-func CreateStringReference(string *c.Char) *JSON
+func CreateStringReference(string *c.Char) *Node
 
 // Create an object/array that only references it's elements so
 // they will not be freed by cJSON_Delete
 //
-// llgo:link (*JSON).CreateObjectReference C.cJSON_CreateObjectReference
-func (self *JSON) CreateObjectReference() *JSON {
+// llgo:link (*Node).CreateObjectReference C.cJSON_CreateObjectReference
+func (self *Node) CreateObjectReference() *Node {
 	return self
 }
 
-// llgo:link (*JSON).CreateArrayReference C.cJSON_CreateArrayReference
-func (self *JSON) CreateArrayReference() *JSON {
+// llgo:link (*Node).CreateArrayReference C.cJSON_CreateArrayReference
+func (self *Node) CreateArrayReference() *Node {
 	return self
 }
 
@@ -261,26 +261,26 @@ func (self *JSON) CreateArrayReference() *JSON {
 // The parameter count cannot be greater than the number of elements in the number array, otherwise array access will be out of bounds.
 //
 //go:linkname CreateIntArray C.cJSON_CreateIntArray
-func CreateIntArray(numbers *c.Int, count c.Int) *JSON
+func CreateIntArray(numbers *c.Int, count c.Int) *Node
 
 //go:linkname CreateFloatArray C.cJSON_CreateFloatArray
-func CreateFloatArray(numbers *c.Float, count c.Int) *JSON
+func CreateFloatArray(numbers *c.Float, count c.Int) *Node
 
 //go:linkname CreateDoubleArray C.cJSON_CreateDoubleArray
-func CreateDoubleArray(numbers *c.Double, count c.Int) *JSON
+func CreateDoubleArray(numbers *c.Double, count c.Int) *Node
 
 //go:linkname CreateStringArray C.cJSON_CreateStringArray
-func CreateStringArray(strings **c.Char, count c.Int) *JSON
+func CreateStringArray(strings **c.Char, count c.Int) *Node
 
 // Append item to the specified array/object.
 //
-// llgo:link (*JSON).AddItemToArray C.cJSON_AddItemToArray
-func (self *JSON) AddItemToArray(item *JSON) Bool {
+// llgo:link (*Node).AddItemToArray C.cJSON_AddItemToArray
+func (self *Node) AddItemToArray(item *Node) Bool {
 	return 0
 }
 
-// llgo:link (*JSON).AddItemToObject C.cJSON_AddItemToObject
-func (self *JSON) AddItemToObject(string *c.Char, item *JSON) Bool {
+// llgo:link (*Node).AddItemToObject C.cJSON_AddItemToObject
+func (self *Node) AddItemToObject(string *c.Char, item *Node) Bool {
 	return 0
 }
 
@@ -288,88 +288,88 @@ func (self *JSON) AddItemToObject(string *c.Char, item *JSON) Bool {
 // WARNING: When this function was used, make sure to always check that (item->type & cJSON_StringIsConst) is zero before
 // writing to `item->string`
 //
-// llgo:link (*JSON).AddItemToObjectCS C.cJSON_AddItemToObjectCS
-func (self *JSON) AddItemToObjectCS(string *c.Char, item *JSON) Bool {
+// llgo:link (*Node).AddItemToObjectCS C.cJSON_AddItemToObjectCS
+func (self *Node) AddItemToObjectCS(string *c.Char, item *Node) Bool {
 	return 0
 }
 
 // Append reference to item to the specified array/object. Use this when you want to add an existing cJSON to a new cJSON, but don't want to corrupt your existing cJSON.
 //
-// llgo:link (*JSON).AddItemReferenceToArray C.cJSON_AddItemReferenceToArray
-func (self *JSON) AddItemReferenceToArray(item *JSON) Bool {
+// llgo:link (*Node).AddItemReferenceToArray C.cJSON_AddItemReferenceToArray
+func (self *Node) AddItemReferenceToArray(item *Node) Bool {
 	return 0
 }
 
-// llgo:link (*JSON).AddItemReferenceToObject C.cJSON_AddItemReferenceToObject
-func (self *JSON) AddItemReferenceToObject(string *c.Char, item *JSON) Bool {
+// llgo:link (*Node).AddItemReferenceToObject C.cJSON_AddItemReferenceToObject
+func (self *Node) AddItemReferenceToObject(string *c.Char, item *Node) Bool {
 	return 0
 }
 
 // Remove/Detach items from Arrays/Objects.
 //
-// llgo:link (*JSON).DetachItemViaPointer C.cJSON_DetachItemViaPointer
-func (self *JSON) DetachItemViaPointer(item *JSON) *JSON {
+// llgo:link (*Node).DetachItemViaPointer C.cJSON_DetachItemViaPointer
+func (self *Node) DetachItemViaPointer(item *Node) *Node {
 	return self
 }
 
-// llgo:link (*JSON).DetachItemFromArray C.cJSON_DetachItemFromArray
-func (self *JSON) DetachItemFromArray(which c.Int) *JSON {
+// llgo:link (*Node).DetachItemFromArray C.cJSON_DetachItemFromArray
+func (self *Node) DetachItemFromArray(which c.Int) *Node {
 	return self
 }
 
-// llgo:link (*JSON).DeleteItemFromArray C.cJSON_DeleteItemFromArray
-func (self *JSON) DeleteItemFromArray(which c.Int) {
+// llgo:link (*Node).DeleteItemFromArray C.cJSON_DeleteItemFromArray
+func (self *Node) DeleteItemFromArray(which c.Int) {
 }
 
-// llgo:link (*JSON).DetachItemFromObject C.cJSON_DetachItemFromObject
-func (self *JSON) DetachItemFromObject(string *c.Char) *JSON {
+// llgo:link (*Node).DetachItemFromObject C.cJSON_DetachItemFromObject
+func (self *Node) DetachItemFromObject(string *c.Char) *Node {
 	return self
 }
 
-// llgo:link (*JSON).DetachItemFromObjectCaseSensitive C.cJSON_DetachItemFromObjectCaseSensitive
-func (self *JSON) DetachItemFromObjectCaseSensitive(string *c.Char) *JSON {
+// llgo:link (*Node).DetachItemFromObjectCaseSensitive C.cJSON_DetachItemFromObjectCaseSensitive
+func (self *Node) DetachItemFromObjectCaseSensitive(string *c.Char) *Node {
 	return self
 }
 
-// llgo:link (*JSON).DeleteItemFromObject C.cJSON_DeleteItemFromObject
-func (self *JSON) DeleteItemFromObject(string *c.Char) {
+// llgo:link (*Node).DeleteItemFromObject C.cJSON_DeleteItemFromObject
+func (self *Node) DeleteItemFromObject(string *c.Char) {
 }
 
-// llgo:link (*JSON).DeleteItemFromObjectCaseSensitive C.cJSON_DeleteItemFromObjectCaseSensitive
-func (self *JSON) DeleteItemFromObjectCaseSensitive(string *c.Char) {
+// llgo:link (*Node).DeleteItemFromObjectCaseSensitive C.cJSON_DeleteItemFromObjectCaseSensitive
+func (self *Node) DeleteItemFromObjectCaseSensitive(string *c.Char) {
 }
 
 // Update array items.
 //
-// llgo:link (*JSON).InsertItemInArray C.cJSON_InsertItemInArray
-func (self *JSON) InsertItemInArray(which c.Int, newitem *JSON) Bool {
+// llgo:link (*Node).InsertItemInArray C.cJSON_InsertItemInArray
+func (self *Node) InsertItemInArray(which c.Int, newitem *Node) Bool {
 	return 0
 }
 
-// llgo:link (*JSON).ReplaceItemViaPointer C.cJSON_ReplaceItemViaPointer
-func (self *JSON) ReplaceItemViaPointer(item *JSON, replacement *JSON) Bool {
+// llgo:link (*Node).ReplaceItemViaPointer C.cJSON_ReplaceItemViaPointer
+func (self *Node) ReplaceItemViaPointer(item *Node, replacement *Node) Bool {
 	return 0
 }
 
-// llgo:link (*JSON).ReplaceItemInArray C.cJSON_ReplaceItemInArray
-func (self *JSON) ReplaceItemInArray(which c.Int, newitem *JSON) Bool {
+// llgo:link (*Node).ReplaceItemInArray C.cJSON_ReplaceItemInArray
+func (self *Node) ReplaceItemInArray(which c.Int, newitem *Node) Bool {
 	return 0
 }
 
-// llgo:link (*JSON).ReplaceItemInObject C.cJSON_ReplaceItemInObject
-func (self *JSON) ReplaceItemInObject(string *c.Char, newitem *JSON) Bool {
+// llgo:link (*Node).ReplaceItemInObject C.cJSON_ReplaceItemInObject
+func (self *Node) ReplaceItemInObject(string *c.Char, newitem *Node) Bool {
 	return 0
 }
 
-// llgo:link (*JSON).ReplaceItemInObjectCaseSensitive C.cJSON_ReplaceItemInObjectCaseSensitive
-func (self *JSON) ReplaceItemInObjectCaseSensitive(string *c.Char, newitem *JSON) Bool {
+// llgo:link (*Node).ReplaceItemInObjectCaseSensitive C.cJSON_ReplaceItemInObjectCaseSensitive
+func (self *Node) ReplaceItemInObjectCaseSensitive(string *c.Char, newitem *Node) Bool {
 	return 0
 }
 
 // Duplicate a cJSON item
 //
-// llgo:link (*JSON).Duplicate C.cJSON_Duplicate
-func (self *JSON) Duplicate(recurse Bool) *JSON {
+// llgo:link (*Node).Duplicate C.cJSON_Duplicate
+func (self *Node) Duplicate(recurse Bool) *Node {
 	return self
 }
 
@@ -379,8 +379,8 @@ func (self *JSON) Duplicate(recurse Bool) *JSON {
 // Recursively compare two cJSON items for equality. If either a or b is NULL or invalid, they will be considered unequal.
 // case_sensitive determines if object keys are treated case sensitive (1) or case insensitive (0)
 //
-// llgo:link (*JSON).Compare C.cJSON_Compare
-func (self *JSON) Compare(b *JSON, case_sensitive Bool) Bool {
+// llgo:link (*Node).Compare C.cJSON_Compare
+func (self *Node) Compare(b *Node, case_sensitive Bool) Bool {
 	return 0
 }
 
@@ -394,62 +394,62 @@ func Minify(json *c.Char)
 // Helper functions for creating and adding items to an object at the same time.
 // They return the added item or NULL on failure.
 //
-// llgo:link (*JSON).AddNullToObject C.cJSON_AddNullToObject
-func (self *JSON) AddNullToObject(name *c.Char) *JSON {
+// llgo:link (*Node).AddNullToObject C.cJSON_AddNullToObject
+func (self *Node) AddNullToObject(name *c.Char) *Node {
 	return self
 }
 
-// llgo:link (*JSON).AddTrueToObject C.cJSON_AddTrueToObject
-func (self *JSON) AddTrueToObject(name *c.Char) *JSON {
+// llgo:link (*Node).AddTrueToObject C.cJSON_AddTrueToObject
+func (self *Node) AddTrueToObject(name *c.Char) *Node {
 	return self
 }
 
-// llgo:link (*JSON).AddFalseToObject C.cJSON_AddFalseToObject
-func (self *JSON) AddFalseToObject(name *c.Char) *JSON {
+// llgo:link (*Node).AddFalseToObject C.cJSON_AddFalseToObject
+func (self *Node) AddFalseToObject(name *c.Char) *Node {
 	return self
 }
 
-// llgo:link (*JSON).AddBoolToObject C.cJSON_AddBoolToObject
-func (self *JSON) AddBoolToObject(name *c.Char, boolean Bool) *JSON {
+// llgo:link (*Node).AddBoolToObject C.cJSON_AddBoolToObject
+func (self *Node) AddBoolToObject(name *c.Char, boolean Bool) *Node {
 	return self
 }
 
-// llgo:link (*JSON).AddNumberToObject C.cJSON_AddNumberToObject
-func (self *JSON) AddNumberToObject(name *c.Char, number c.Double) *JSON {
+// llgo:link (*Node).AddNumberToObject C.cJSON_AddNumberToObject
+func (self *Node) AddNumberToObject(name *c.Char, number c.Double) *Node {
 	return self
 }
 
-// llgo:link (*JSON).AddStringToObject C.cJSON_AddStringToObject
-func (self *JSON) AddStringToObject(name *c.Char, string *c.Char) *JSON {
+// llgo:link (*Node).AddStringToObject C.cJSON_AddStringToObject
+func (self *Node) AddStringToObject(name *c.Char, string *c.Char) *Node {
 	return self
 }
 
-// llgo:link (*JSON).AddRawToObject C.cJSON_AddRawToObject
-func (self *JSON) AddRawToObject(name *c.Char, raw *c.Char) *JSON {
+// llgo:link (*Node).AddRawToObject C.cJSON_AddRawToObject
+func (self *Node) AddRawToObject(name *c.Char, raw *c.Char) *Node {
 	return self
 }
 
-// llgo:link (*JSON).AddObjectToObject C.cJSON_AddObjectToObject
-func (self *JSON) AddObjectToObject(name *c.Char) *JSON {
+// llgo:link (*Node).AddObjectToObject C.cJSON_AddObjectToObject
+func (self *Node) AddObjectToObject(name *c.Char) *Node {
 	return self
 }
 
-// llgo:link (*JSON).AddArrayToObject C.cJSON_AddArrayToObject
-func (self *JSON) AddArrayToObject(name *c.Char) *JSON {
+// llgo:link (*Node).AddArrayToObject C.cJSON_AddArrayToObject
+func (self *Node) AddArrayToObject(name *c.Char) *Node {
 	return self
 }
 
 // helper for the cJSON_SetNumberValue macro
 //
-// llgo:link (*JSON).SetNumberHelper C.cJSON_SetNumberHelper
-func (self *JSON) SetNumberHelper(number c.Double) c.Double {
+// llgo:link (*Node).SetNumberHelper C.cJSON_SetNumberHelper
+func (self *Node) SetNumberHelper(number c.Double) c.Double {
 	return 0
 }
 
 // Change the valuestring of a cJSON_String object, only takes effect when type of object is cJSON_String
 //
-// llgo:link (*JSON).SetValuestring C.cJSON_SetValuestring
-func (self *JSON) SetValuestring(valuestring *c.Char) *c.Char {
+// llgo:link (*Node).SetValuestring C.cJSON_SetValuestring
+func (self *Node) SetValuestring(valuestring *c.Char) *c.Char {
 	return nil
 }
 

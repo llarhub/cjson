@@ -6,86 +6,86 @@ import "github.com/goplus/lib/c"
 
 // Implement RFC6901 (https://tools.ietf.org/html/rfc6901) JSON Pointer spec.
 //
-// llgo:link (*JSON).Pointer C.cJSONUtils_GetPointer
-func (self *JSON) Pointer(pointer *c.Char) *JSON {
+// llgo:link (*Node).Pointer C.cJSONUtils_GetPointer
+func (self *Node) Pointer(pointer *c.Char) *Node {
 	return self
 }
 
-// llgo:link (*JSON).PointerCaseSensitive C.cJSONUtils_GetPointerCaseSensitive
-func (self *JSON) PointerCaseSensitive(pointer *c.Char) *JSON {
+// llgo:link (*Node).PointerCaseSensitive C.cJSONUtils_GetPointerCaseSensitive
+func (self *Node) PointerCaseSensitive(pointer *c.Char) *Node {
 	return self
 }
 
 // Implement RFC6902 (https://tools.ietf.org/html/rfc6902) JSON Patch spec.
 // NOTE: This modifies objects in 'from' and 'to' by sorting the elements by their key
 //
-// llgo:link (*JSON).GeneratePatches C.cJSONUtils_GeneratePatches
-func (self *JSON) GeneratePatches(to *JSON) *JSON {
+// llgo:link (*Node).GeneratePatches C.cJSONUtils_GeneratePatches
+func (self *Node) GeneratePatches(to *Node) *Node {
 	return self
 }
 
-// llgo:link (*JSON).GeneratePatchesCaseSensitive C.cJSONUtils_GeneratePatchesCaseSensitive
-func (self *JSON) GeneratePatchesCaseSensitive(to *JSON) *JSON {
+// llgo:link (*Node).GeneratePatchesCaseSensitive C.cJSONUtils_GeneratePatchesCaseSensitive
+func (self *Node) GeneratePatchesCaseSensitive(to *Node) *Node {
 	return self
 }
 
 // Utility for generating patch array entries.
 //
-// llgo:link (*JSON).AddPatchToArray C.cJSONUtils_AddPatchToArray
-func (self *JSON) AddPatchToArray(operation *c.Char, path *c.Char, value *JSON) {
+// llgo:link (*Node).AddPatchToArray C.cJSONUtils_AddPatchToArray
+func (self *Node) AddPatchToArray(operation *c.Char, path *c.Char, value *Node) {
 }
 
 // Returns 0 for success.
 //
-// llgo:link (*JSON).ApplyPatches C.cJSONUtils_ApplyPatches
-func (self *JSON) ApplyPatches(patches *JSON) c.Int {
+// llgo:link (*Node).ApplyPatches C.cJSONUtils_ApplyPatches
+func (self *Node) ApplyPatches(patches *Node) c.Int {
 	return 0
 }
 
-// llgo:link (*JSON).ApplyPatchesCaseSensitive C.cJSONUtils_ApplyPatchesCaseSensitive
-func (self *JSON) ApplyPatchesCaseSensitive(patches *JSON) c.Int {
+// llgo:link (*Node).ApplyPatchesCaseSensitive C.cJSONUtils_ApplyPatchesCaseSensitive
+func (self *Node) ApplyPatchesCaseSensitive(patches *Node) c.Int {
 	return 0
 }
 
 // Implement RFC7386 (https://tools.ietf.org/html/rfc7396) JSON Merge Patch spec.
 // target will be modified by patch. return value is new ptr for target.
 //
-// llgo:link (*JSON).MergePatch C.cJSONUtils_MergePatch
-func (self *JSON) MergePatch(patch *JSON) *JSON {
+// llgo:link (*Node).MergePatch C.cJSONUtils_MergePatch
+func (self *Node) MergePatch(patch *Node) *Node {
 	return self
 }
 
-// llgo:link (*JSON).MergePatchCaseSensitive C.cJSONUtils_MergePatchCaseSensitive
-func (self *JSON) MergePatchCaseSensitive(patch *JSON) *JSON {
+// llgo:link (*Node).MergePatchCaseSensitive C.cJSONUtils_MergePatchCaseSensitive
+func (self *Node) MergePatchCaseSensitive(patch *Node) *Node {
 	return self
 }
 
 // generates a patch to move from -> to
 // NOTE: This modifies objects in 'from' and 'to' by sorting the elements by their key
 //
-// llgo:link (*JSON).GenerateMergePatch C.cJSONUtils_GenerateMergePatch
-func (self *JSON) GenerateMergePatch(to *JSON) *JSON {
+// llgo:link (*Node).GenerateMergePatch C.cJSONUtils_GenerateMergePatch
+func (self *Node) GenerateMergePatch(to *Node) *Node {
 	return self
 }
 
-// llgo:link (*JSON).GenerateMergePatchCaseSensitive C.cJSONUtils_GenerateMergePatchCaseSensitive
-func (self *JSON) GenerateMergePatchCaseSensitive(to *JSON) *JSON {
+// llgo:link (*Node).GenerateMergePatchCaseSensitive C.cJSONUtils_GenerateMergePatchCaseSensitive
+func (self *Node) GenerateMergePatchCaseSensitive(to *Node) *Node {
 	return self
 }
 
 // Given a root object and a target object, construct a pointer from one to the other.
 //
-// llgo:link (*JSON).FindPointerFromObjectTo C.cJSONUtils_FindPointerFromObjectTo
-func (self *JSON) FindPointerFromObjectTo(target *JSON) *c.Char {
+// llgo:link (*Node).FindPointerFromObjectTo C.cJSONUtils_FindPointerFromObjectTo
+func (self *Node) FindPointerFromObjectTo(target *Node) *c.Char {
 	return nil
 }
 
 // Sorts the members of the object into alphabetical order.
 //
-// llgo:link (*JSON).SortObject C.cJSONUtils_SortObject
-func (self *JSON) SortObject() {
+// llgo:link (*Node).SortObject C.cJSONUtils_SortObject
+func (self *Node) SortObject() {
 }
 
-// llgo:link (*JSON).SortObjectCaseSensitive C.cJSONUtils_SortObjectCaseSensitive
-func (self *JSON) SortObjectCaseSensitive() {
+// llgo:link (*Node).SortObjectCaseSensitive C.cJSONUtils_SortObjectCaseSensitive
+func (self *Node) SortObjectCaseSensitive() {
 }
