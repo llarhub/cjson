@@ -1,5 +1,5 @@
-module github.com/llarhub/cjson
+module github.com/llarhub/cjson/c
 
-go 1.23 // llgo 1.0
+go 1.23
 
 require github.com/goplus/lib v0.6.1
