@@ -121,13 +121,13 @@ import (
 )
 
 func main() {
-	root := cjson.Parse(c.AllocaCStr(`{"name":"LLGo"}`))
+	root := cjson.Parse(c.Str(`{"name":"LLGo"}`))
 	if root == nil {
 		panic("invalid JSON")
 	}
 	defer root.Delete()
 
-	name := root.ObjectItemCaseSensitive(c.AllocaCStr("name"))
+	name := root.ObjectItemCaseSensitive(c.Str("name"))
 	if name != nil && name.IsString() != 0 {
 		println(c.GoString(name.StringValue()))
 	}
@@ -147,13 +147,13 @@ import (
 )
 
 func main() {
-	root := cjson.Parse(c.AllocaCStr(`{"user":{"name":"LLGo"}}`))
+	root := cjson.Parse(c.Str(`{"user":{"name":"LLGo"}}`))
 	if root == nil {
 		panic("invalid JSON")
 	}
 	defer root.Delete()
 
-	name := root.Pointer(c.AllocaCStr("/user/name"))
+	name := root.Pointer(c.Str("/user/name"))
 	if name == nil || name.IsString() == 0 {
 		panic("JSON Pointer did not resolve to a string")
 	}
