@@ -1,6 +1,11 @@
 # cJSON
 
-LLGo bindings for cJSON 1.7.19.
+[![GoDoc](https://pkg.go.dev/badge/github.com/llarhub/cjson.svg)](https://pkg.go.dev/github.com/llarhub/cjson)
+[![GitHub release](https://img.shields.io/github/v/tag/llarhub/cjson.svg?label=release)](https://github.com/llarhub/cjson/releases)
+[![LLGo](https://img.shields.io/badge/powered_by-LLGo-green.svg)](https://github.com/xgo-dev/llgo)
+[![XGo](https://img.shields.io/badge/project-XGo-blue.svg)](https://github.com/goplus/xgo)
+
+LLGo bindings for cJSON, enabling XGo/Go programs to parse, build and serialize JSON documents via the cJSON C API.
 
 ## Installation
 
@@ -103,6 +108,8 @@ go get github.com/llarhub/cjson
 
 The binding also exposes the JSON Pointer, JSON Patch, and JSON Merge Patch helpers from `cJSON_Utils.h`; these methods require `libcjson_utils` at link and runtime.
 
+cJSON installs its headers under `include/cjson`, and its [documented C include form](https://github.com/DaveGamble/cJSON/tree/v1.7.19#including-cjson) is `#include <cjson/cJSON.h>`. The header sources on the `c` branch follow this layout in `c/include/cjson/`, containing both `cJSON.h` and `cJSON_Utils.h`.
+
 ## Usage
 
 Parse JSON and read a string field:
@@ -116,13 +123,13 @@ import (
 )
 
 func main() {
-	root := cjson.Parse(c.AllocaCStr(`{"name":"LLGo"}`))
+	root := cjson.Parse(c.Str(`{"name":"LLGo"}`))
 	if root == nil {
 		panic("invalid JSON")
 	}
 	defer root.Delete()
 
-	name := root.ObjectItemCaseSensitive(c.AllocaCStr("name"))
+	name := root.ObjectItemCaseSensitive(c.Str("name"))
 	if name != nil && name.IsString() != 0 {
 		println(c.GoString(name.StringValue()))
 	}
@@ -142,13 +149,13 @@ import (
 )
 
 func main() {
-	root := cjson.Parse(c.AllocaCStr(`{"user":{"name":"LLGo"}}`))
+	root := cjson.Parse(c.Str(`{"user":{"name":"LLGo"}}`))
 	if root == nil {
 		panic("invalid JSON")
 	}
 	defer root.Delete()
 
-	name := root.Pointer(c.AllocaCStr("/user/name"))
+	name := root.Pointer(c.Str("/user/name"))
 	if name == nil || name.IsString() == 0 {
 		panic("JSON Pointer did not resolve to a string")
 	}
