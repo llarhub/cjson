@@ -16,7 +16,6 @@ func (self *Node) PointerCaseSensitive(pointer *c.Char) *Node {
 	return self
 }
 
-// Implement RFC6902 (https://tools.ietf.org/html/rfc6902) JSON Patch spec.
 // NOTE: This modifies objects in 'from' and 'to' by sorting the elements by their key
 //
 // llgo:link (*Node).GeneratePatches C.cJSONUtils_GeneratePatches
@@ -24,6 +23,8 @@ func (self *Node) GeneratePatches(to *Node) *Node {
 	return self
 }
 
+// Utility for generating patch array entries.
+//
 // llgo:link (*Node).GeneratePatchesCaseSensitive C.cJSONUtils_GeneratePatchesCaseSensitive
 func (self *Node) GeneratePatchesCaseSensitive(to *Node) *Node {
 	return self
@@ -47,7 +48,6 @@ func (self *Node) ApplyPatchesCaseSensitive(patches *Node) c.Int {
 	return 0
 }
 
-// Implement RFC7386 (https://tools.ietf.org/html/rfc7396) JSON Merge Patch spec.
 // target will be modified by patch. return value is new ptr for target.
 //
 // llgo:link (*Node).MergePatch C.cJSONUtils_MergePatch
@@ -55,12 +55,13 @@ func (self *Node) MergePatch(patch *Node) *Node {
 	return self
 }
 
+// generates a patch to move from -> to
+//
 // llgo:link (*Node).MergePatchCaseSensitive C.cJSONUtils_MergePatchCaseSensitive
 func (self *Node) MergePatchCaseSensitive(patch *Node) *Node {
 	return self
 }
 
-// generates a patch to move from -> to
 // NOTE: This modifies objects in 'from' and 'to' by sorting the elements by their key
 //
 // llgo:link (*Node).GenerateMergePatch C.cJSONUtils_GenerateMergePatch

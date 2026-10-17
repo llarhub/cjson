@@ -7,20 +7,30 @@ import (
 	"unsafe"
 )
 
-const VERSION_MAJOR = 1
-const VERSION_MINOR = 7
-const VERSION_PATCH = 19
-const Invalid = 0
-const False = 1
-const True = 2
-const NULL = 4
-const Number = 8
-const String = 16
-const Array = 32
-const Object = 64
-const Raw = 128
-const IsReference = 256
-const StringIsConst = 512
+// project version
+const (
+	VERSION_MAJOR = 1
+	VERSION_MINOR = 7
+	VERSION_PATCH = 19
+)
+
+// cJSON Types:
+const (
+	Invalid = 0
+	False   = 1
+	True    = 2
+	NULL    = 4
+	Number  = 8
+	String  = 16
+	Array   = 32
+	Object  = 64
+	// raw json
+	Raw = 128
+)
+const (
+	IsReference   = 256
+	StringIsConst = 512
+)
 const NESTING_LIMIT = 1000
 const CIRCULAR_LIMIT = 10000
 
@@ -54,16 +64,16 @@ func Version() *c.Char
 func (self *Hooks) Init() {
 }
 
-// Memory Management: the caller is always responsible to free the results from all variants of cJSON_Parse (with cJSON_Delete) and cJSON_Print (with stdlib free, cJSON_Hooks.free_fn, or cJSON_free as appropriate). The exception is cJSON_PrintPreallocated, where the caller has full responsibility of the buffer.
 // Supply a block of JSON, and this returns a cJSON object you can interrogate.
 //
 //go:linkname Parse C.cJSON_Parse
 func Parse(value *c.Char) *Node
 
+// ParseWithOpts allows you to require (and check) that the JSON is null terminated, and to retrieve the pointer to the final byte parsed.
+//
 //go:linkname ParseWithLength C.cJSON_ParseWithLength
 func ParseWithLength(value *c.Char, buffer_length c.SizeT) *Node
 
-// ParseWithOpts allows you to require (and check) that the JSON is null terminated, and to retrieve the pointer to the final byte parsed.
 // If you supply a ptr in return_parse_end and parsing fails, then return_parse_end will contain a pointer to the error so will match cJSON_GetErrorPtr().
 //
 //go:linkname ParseWithOpts C.cJSON_ParseWithOpts
@@ -93,7 +103,6 @@ func (self *Node) PrintBuffered(prebuffer c.Int, fmt Bool) *c.Char {
 	return nil
 }
 
-// Render a cJSON entity to text using a buffer already allocated in memory with given length. Returns 1 on success and 0 on failure.
 // NOTE: cJSON is not always 100% accurate in estimating how much memory it will use, so to be safe allocate 5 bytes more than you actually need
 //
 // llgo:link (*Node).PrintPreallocated C.cJSON_PrintPreallocated
@@ -133,6 +142,8 @@ func (self *Node) ObjectItemCaseSensitive(string *c.Char) *Node {
 	return self
 }
 
+// For analysing failed parses. This returns a pointer to the parse error. You'll probably need to look a few chars back to make sense of it. Defined when cJSON_Parse() returns 0. 0 when cJSON_Parse() succeeds.
+//
 // llgo:link (*Node).HasObjectItem C.cJSON_HasObjectItem
 func (self *Node) HasObjectItem(string *c.Char) Bool {
 	return 0
@@ -224,6 +235,8 @@ func CreateBool(boolean Bool) *Node
 //go:linkname CreateNumber C.cJSON_CreateNumber
 func CreateNumber(num c.Double) *Node
 
+// raw json
+//
 //go:linkname CreateString C.cJSON_CreateString
 func CreateString(string *c.Char) *Node
 
@@ -279,6 +292,10 @@ func (self *Node) AddItemToArray(item *Node) Bool {
 	return 0
 }
 
+// Use this when string is definitely const (i.e. a literal, or as good as), and will definitely survive the cJSON object.
+// WARNING: When this function was used, make sure to always check that (item->type & cJSON_StringIsConst) is zero before
+// writing to `item->string`
+//
 // llgo:link (*Node).AddItemToObject C.cJSON_AddItemToObject
 func (self *Node) AddItemToObject(string *c.Char, item *Node) Bool {
 	return 0
@@ -373,9 +390,6 @@ func (self *Node) Duplicate(recurse Bool) *Node {
 	return self
 }
 
-// Duplicate will create a new, identical cJSON item to the one you pass, in new memory that will
-// need to be released. With recurse!=0, it will duplicate any children connected to the item.
-// The item->next and ->prev pointers are always zero on return from Duplicate.
 // Recursively compare two cJSON items for equality. If either a or b is NULL or invalid, they will be considered unequal.
 // case_sensitive determines if object keys are treated case sensitive (1) or case insensitive (0)
 //
