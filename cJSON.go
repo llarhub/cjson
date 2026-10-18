@@ -287,10 +287,8 @@ func CreateStringArray(strings **c.Char, count c.Int) *Node
 
 // Append item to the specified array/object.
 //
-// llgo:link (*Node).AddItemToArray C.cJSON_AddItemToArray
-func (self *Node) AddItemToArray(item *Node) Bool {
-	return 0
-}
+//go:linkname AddItemToArray C.cJSON_AddItemToArray
+func AddItemToArray(array *Node, item *Node) Bool
 
 // Use this when string is definitely const (i.e. a literal, or as good as), and will definitely survive the cJSON object.
 // WARNING: When this function was used, make sure to always check that (item->type & cJSON_StringIsConst) is zero before
@@ -312,10 +310,8 @@ func (self *Node) AddItemToObjectCS(string *c.Char, item *Node) Bool {
 
 // Append reference to item to the specified array/object. Use this when you want to add an existing cJSON to a new cJSON, but don't want to corrupt your existing cJSON.
 //
-// llgo:link (*Node).AddItemReferenceToArray C.cJSON_AddItemReferenceToArray
-func (self *Node) AddItemReferenceToArray(item *Node) Bool {
-	return 0
-}
+//go:linkname AddItemReferenceToArray C.cJSON_AddItemReferenceToArray
+func AddItemReferenceToArray(array *Node, item *Node) Bool
 
 // llgo:link (*Node).AddItemReferenceToObject C.cJSON_AddItemReferenceToObject
 func (self *Node) AddItemReferenceToObject(string *c.Char, item *Node) Bool {
@@ -324,10 +320,8 @@ func (self *Node) AddItemReferenceToObject(string *c.Char, item *Node) Bool {
 
 // Remove/Detach items from Arrays/Objects.
 //
-// llgo:link (*Node).DetachItemViaPointer C.cJSON_DetachItemViaPointer
-func (self *Node) DetachItemViaPointer(item *Node) *Node {
-	return self
-}
+//go:linkname DetachItemViaPointer C.cJSON_DetachItemViaPointer
+func DetachItemViaPointer(parent *Node, item *Node) *Node
 
 // llgo:link (*Node).DetachItemFromArray C.cJSON_DetachItemFromArray
 func (self *Node) DetachItemFromArray(which c.Int) *Node {
