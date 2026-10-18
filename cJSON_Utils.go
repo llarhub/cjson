@@ -2,7 +2,10 @@
 
 package cjson
 
-import "github.com/goplus/lib/c"
+import (
+	"github.com/goplus/lib/c"
+	_ "unsafe"
+)
 
 // Implement RFC6901 (https://tools.ietf.org/html/rfc6901) JSON Pointer spec.
 //
@@ -18,17 +21,13 @@ func (self *Node) PointerCaseSensitive(pointer *c.Char) *Node {
 
 // NOTE: This modifies objects in 'from' and 'to' by sorting the elements by their key
 //
-// llgo:link (*Node).GeneratePatches C.cJSONUtils_GeneratePatches
-func (self *Node) GeneratePatches(to *Node) *Node {
-	return self
-}
+//go:linkname GeneratePatches C.cJSONUtils_GeneratePatches
+func GeneratePatches(from *Node, to *Node) *Node
 
 // Utility for generating patch array entries.
 //
-// llgo:link (*Node).GeneratePatchesCaseSensitive C.cJSONUtils_GeneratePatchesCaseSensitive
-func (self *Node) GeneratePatchesCaseSensitive(to *Node) *Node {
-	return self
-}
+//go:linkname GeneratePatchesCaseSensitive C.cJSONUtils_GeneratePatchesCaseSensitive
+func GeneratePatchesCaseSensitive(from *Node, to *Node) *Node
 
 // Utility for generating patch array entries.
 //
@@ -64,22 +63,16 @@ func (self *Node) MergePatchCaseSensitive(patch *Node) *Node {
 
 // NOTE: This modifies objects in 'from' and 'to' by sorting the elements by their key
 //
-// llgo:link (*Node).GenerateMergePatch C.cJSONUtils_GenerateMergePatch
-func (self *Node) GenerateMergePatch(to *Node) *Node {
-	return self
-}
+//go:linkname GenerateMergePatch C.cJSONUtils_GenerateMergePatch
+func GenerateMergePatch(from *Node, to *Node) *Node
 
-// llgo:link (*Node).GenerateMergePatchCaseSensitive C.cJSONUtils_GenerateMergePatchCaseSensitive
-func (self *Node) GenerateMergePatchCaseSensitive(to *Node) *Node {
-	return self
-}
+//go:linkname GenerateMergePatchCaseSensitive C.cJSONUtils_GenerateMergePatchCaseSensitive
+func GenerateMergePatchCaseSensitive(from *Node, to *Node) *Node
 
 // Given a root object and a target object, construct a pointer from one to the other.
 //
-// llgo:link (*Node).FindPointerFromObjectTo C.cJSONUtils_FindPointerFromObjectTo
-func (self *Node) FindPointerFromObjectTo(target *Node) *c.Char {
-	return nil
-}
+//go:linkname FindPointerFromObjectTo C.cJSONUtils_FindPointerFromObjectTo
+func FindPointerFromObjectTo(object *Node, target *Node) *c.Char
 
 // Sorts the members of the object into alphabetical order.
 //
